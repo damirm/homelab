@@ -1,0 +1,18 @@
+#cloud-config
+autoinstall:
+  version: 1
+  id: ubuntu-server
+  identity:
+    hostname: homelab
+    username: yw
+    password: "$6$5oWhiUMlgeo9sLJr$u5bsx6uszEpe7EvugF4A9ruFg/.8LqDT0H3Bx9ATvykY6SVOpG0q1z0ZNt9fAgk8UZhB5CVqeGdxmT22oIqN2."
+    realname: "Damir Makhmutov"
+  ssh:
+    install-server: true
+    allow-pw: true
+    authorized-keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKb/UdPCQ+bdFcNMvf0oysoh1aDICEOePVfSe9/Hp1h3 iam@damir.space
+  locale: "en_US.UTF-8"
+  keyboard:
+    layout: us
+  updates: security
