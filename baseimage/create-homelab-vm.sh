@@ -9,24 +9,30 @@ if [ ! -f "$ISO_PATH" ]; then
   exit 1
 fi
 
-LIBVIRT_ISO_PATH="/var/lib/libvirt/images/homelab.iso"
-LIBVIRT_QCOW_PATH="/var/lib/libvirt/images/homelab.qcow2"
-
-trap "sudo rm $LIBVIRT_ISO_PATH" EXIT
-
-sudo cp "$ISO_PATH" "$LIBVIRT_ISO_PATH"
-
 VM_NAME=homelab
-VM_RAM=2048
-VM_CPUS=8
+VM_RAM=8192
+VM_CPUS=16
 VM_DISK_GB=20
 
-if virsh list --all | grep -q "$VM_NAME"; then
-  sudo virsh detach-disk --domain "$VM_NAME" --target "$LIBVIRT_QCOW_PATH"
-  sudo virsh destroy --domain "$VM_NAME"
-  sudo virsh undefine --domain "$VM_NAME"
-  sudo rm "$LIBVIRT_QCOW_PATH"
+LIBVIRT_ISO_PATH="/var/lib/libvirt/images/$VM_NAME.iso"
+LIBVIRT_QCOW_PATH="/var/lib/libvirt/images/$VM_NAME.qcow2"
+
+if sudo virsh list --all | grep -q "$VM_NAME"; then
+  # sudo virsh destroy --domain "$VM_NAME"
+  sudo virsh undefine --domain "$VM_NAME" --storage vda
 fi
+
+if sudo virsh vol-list --pool images | grep -q "$VM_NAME.qcow2"; then
+  # sudo virsh detach-disk --domain "$VM_NAME" --target "$LIBVIRT_QCOW_PATH"
+  sudo virsh vol-delete --pool images --vol "$LIBVIRT_QCOW_PATH"
+fi
+
+if sudo virsh vol-list --pool images | grep -q "$VM_NAME.iso"; then
+  sudo virsh vol-delete --pool images --vol "$LIBVIRT_ISO_PATH"
+fi
+
+trap "sudo rm $LIBVIRT_ISO_PATH" EXIT
+sudo cp "$ISO_PATH" "$LIBVIRT_ISO_PATH"
 
 # TODO: Should I specify path to disk?
 sudo virt-install \

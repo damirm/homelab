@@ -8,3 +8,5 @@ The repository contains IaaC for homelab server.
 - [ ] k8s: run dashboard
 - [ ] k8s: run pi-hole
 - [ ] ssl certs
+- [ ] k8s: run n8n or something like this
+- [ ] k8s: run ai code assistant
