@@ -1,0 +1,35 @@
+---
+- name: Run controller container
+  containers.podman.podman_container:
+    name: k0s-controller
+    image: "{{ k0s_image }}"
+    state: started
+    detach: true
+    exposed_ports:
+      - 6443
+    ports:
+      - 6443
+    volumes:
+      - /var/lib/k0s
+    read_only: true
+    read_only_tmpfs: true
+    command: "k0s controller"
+
+- name: Obtain k0s token
+  containers.podman.podman_container_exec:
+    name: k0s-controller
+    command: "k0s token create --role=worker"
+  register: k0s_token
+
+- name: Run worker container
+  containers.podman.podman_container:
+    name: k0s-worker-0
+    image: "{{ k0s_image }}"
+    state: started
+    detach: true
+    privileged: true
+    volumes:
+      - /var/lib/k0s
+      - /var/log/pods
+    command: "k0s worker {{ k0s_token.stdout }}"
+

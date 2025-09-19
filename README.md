@@ -12,3 +12,5 @@ The repository contains IaaC for homelab server.
 - [ ] k8s: grafana
 - [ ] k8s: ci / cd automation tool
 - [ ] local ssl certs
+- [ ] Should I spawn k0s inside virtual machine?
+- [ ] Should I spawn k0s components inside containers?

@@ -1,8 +1,5 @@
 - hosts: all
-  tasks:
-    - name: Run whoami command
-      ansible.builtin.command: whoami
-      register: whoami_output
-    - name: Print message
-      debug:
-        msg: "Hello, {{whoami_output.stdout}}"
+  become: true
+  roles:
+    - ../roles/common
+    - ../roles/k0s

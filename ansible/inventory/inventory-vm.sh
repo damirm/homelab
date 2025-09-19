@@ -13,7 +13,9 @@ EOF
 elif [[ "$1" == "--host" ]]; then
   cat << EOF
 {
-  "ansible_host": "$VM_ADDR"
+  "ansible_host": "$VM_ADDR",
+  "ansible_user": "yw", 
+  "ansible_ssh_private_key_file": "~/.ssh/id_ed25519"
 }
 EOF
 else

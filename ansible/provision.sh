@@ -9,7 +9,8 @@ if [ ! -f "$INVENTORY" ]; then
   exit 1
 fi
 
+ansible-galaxy collection install -r requirements.yaml
+
 ansible-playbook \
   --inventory-file "$INVENTORY" \
-  --private-key "$HOME/.ssh/id_ed25519" \
   playbooks/playbook.yaml
