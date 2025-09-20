@@ -4,6 +4,7 @@
     name: k0s-controller
     image: "{{ k0s_image }}"
     state: started
+    restart_policy: always
     detach: true
     exposed_ports:
       - 6443
@@ -15,17 +16,29 @@
     read_only_tmpfs: true
     command: "k0s controller"
 
+- name: Wait until controller started
+  containers.podman.podman_container_exec:
+    name: k0s-controller
+    command: "test -e /run/k0s/status.sock"
+  register: controller_status_socket_check
+  until: controller_status_socket_check.rc == 0
+  retries: 20
+  delay: 5
+
+# TODO: Add idempotency.
 - name: Obtain k0s token
   containers.podman.podman_container_exec:
     name: k0s-controller
     command: "k0s token create --role=worker"
   register: k0s_token
 
+# TODO: Add idempotency.
 - name: Run worker container
   containers.podman.podman_container:
     name: k0s-worker-0
     image: "{{ k0s_image }}"
     state: started
+    restart_policy: always
     detach: true
     privileged: true
     volumes:
@@ -33,3 +46,4 @@
       - /var/log/pods
     command: "k0s worker {{ k0s_token.stdout }}"
 
+# TODO: Configure local kubeconfig.
