@@ -13,5 +13,6 @@ The repository contains IaaC for homelab server.
 - [ ] k8s: local ssl certs
 - [ ] k8s: run n8n or something like this
 - [ ] k8s: run ai code assistant
+- [ ] k8s: run atuin sync server
 - [ ] autoinstall: network setup static ip
 
