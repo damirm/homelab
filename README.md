@@ -15,4 +15,4 @@ The repository contains IaaC for homelab server.
 - [ ] k8s: run ai code assistant
 - [ ] k8s: run atuin sync server
 - [ ] autoinstall: network setup static ip
-
+- [ ] raspberry: add raspberry pi image provision
