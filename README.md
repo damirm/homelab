@@ -3,6 +3,14 @@
 The repository contains IaaC for homelab server.
 
 # TODO
+- [ ] Add macos support for build scripts (use ubuntu multipass for that?)
+- [ ] autoinstall: network setup static ip
+- [ ] raspberry: add raspberry pi image provision
+- [ ] Should I use k8s to run services in homelab?
+- [ ] Install proxmox ve
+- [ ] Should I use nixos for homelab?
+- [ ] use packer to build image (use same ansible provisioner)
+- [ ] packer has to create iso for installing to hw and vagrant / multipass / etc.
 - [ ] ansible: install k0s
 - [ ] k8s: run dashboard
 - [ ] k8s: run pi-hole
@@ -11,8 +19,7 @@ The repository contains IaaC for homelab server.
 - [ ] k8s: ci / cd automation tool
 - [ ] k8s: grafana
 - [ ] k8s: local ssl certs
+- [ ] k8s: run atuin sync server
 - [ ] k8s: run n8n or something like this
 - [ ] k8s: run ai code assistant
-- [ ] k8s: run atuin sync server
-- [ ] autoinstall: network setup static ip
-- [ ] raspberry: add raspberry pi image provision
+- [ ] Add openwrt testing stand configuration (as well as wireguard config to connect to openwrt)
