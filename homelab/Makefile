@@ -35,7 +35,10 @@ packer-iso-validate: packer-fmt
 	cd $(PACKER_DIR) && packer validate autoinstall-iso.pkr.hcl
 
 iso-builder-image:
-	$(CONTAINER_ENGINE) build --platform=$(DOCKER_PLATFORM) -t $(ISO_BUILDER_IMAGE) -f iso/Dockerfile .
+	$(CONTAINER_ENGINE) buildx build --platform=$(DOCKER_PLATFORM) \
+		--cache-from=type=local,src=/tmp/.buildx-cache \
+		--cache-to=type=local,dest=/tmp/.buildx-cache,mode=max \
+		-t $(ISO_BUILDER_IMAGE) -f iso/Dockerfile .
 
 iso-build: iso-builder-image packer-iso-init packer-iso-validate
 	cd $(PACKER_DIR) && packer build autoinstall-iso.pkr.hcl

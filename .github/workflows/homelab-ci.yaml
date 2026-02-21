@@ -51,15 +51,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       - name: Build ISO builder image + ISO
         run: make iso-build
-
-      - name: Upload ISO artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ubuntu-24.04-autoinstall-homelab
-          path: homelab/dist/*.iso
-          if-no-files-found: error
+        env:
+          BUILDKIT_PROGRESS: plain
 
   # release:
   #   if: startsWith(github.ref, 'refs/tags/v')
