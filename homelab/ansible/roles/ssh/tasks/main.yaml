@@ -1,0 +1,26 @@
+- name: Ensure .ssh exists
+  ansible.builtin.file:
+    path: /home/ansible/.ssh
+    state: directory
+    owner: ansible
+    group: ansible
+    mode: "0700"
+
+- name: Install authorized_keys for ansible user
+  ansible.posix.authorized_key:
+    user: ansible
+    key: "{{ item }}"
+  loop: "{{ ssh_authorized_keys }}"
+  when: ssh_authorized_keys is defined
+
+- name: Harden sshd (no password auth)
+  ansible.builtin.copy:
+    dest: /etc/ssh/sshd_config.d/90-homelab.conf
+    mode: "0644"
+    content: |
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+      ChallengeResponseAuthentication no
+      PermitRootLogin no
+  notify: restart ssh
+

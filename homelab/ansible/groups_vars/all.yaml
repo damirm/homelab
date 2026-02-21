@@ -1,0 +1,5 @@
+ssh_authorized_keys:
+  # MBP 16 M4
+  - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM7Q2kGNSK3dETkqaGjPmSu/gwDrIHPv9MWXfI0Oc5xt iam@damir.space"
+  # Thinkpad T14S Gen4
+  - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKb/UdPCQ+bdFcNMvf0oysoh1aDICEOePVfSe9/Hp1h3 iam@damir.space"

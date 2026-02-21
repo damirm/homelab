@@ -1,0 +1,38 @@
+- name: Install Podman packages
+  ansible.builtin.apt:
+    update_cache: true
+    name:
+      - podman
+      - buildah
+      - skopeo
+      - fuse-overlayfs
+      - slirp4netns
+    state: present
+
+- name: Install podman-docker shim (optional)
+  ansible.builtin.apt:
+    name: podman-docker
+    state: present
+  when: podman_install_podman_docker
+
+- name: Ensure containers config dir exists
+  ansible.builtin.file:
+    path: /etc/containers
+    state: directory
+    mode: "0755"
+
+- name: Basic registries.conf
+  ansible.builtin.copy:
+    dest: /etc/containers/registries.conf
+    mode: "0644"
+    content: |
+      unqualified-search-registries = ["docker.io", "quay.io"]
+
+- name: Set cgroup manager to systemd
+  ansible.builtin.copy:
+    dest: /etc/containers/containers.conf
+    mode: "0644"
+    content: |
+      [engine]
+      cgroup_manager="systemd"
+

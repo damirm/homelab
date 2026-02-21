@@ -1,0 +1,21 @@
+- name: Homelab baseline
+  hosts: all
+  become: true
+
+  vars:
+    managed_users:
+      - name: yesworld
+        groups: ["sudo"]
+        shell: /bin/bash
+        ssh_keys:
+          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM7Q2kGNSK3dETkqaGjPmSu/gwDrIHPv9MWXfI0Oc5xt iam@damir.space"
+        sudo_nopasswd: true
+
+  # TODO: Add nomad.
+  # TODO: Add ollama and some models.
+  roles:
+    - common
+    - users
+    - ssh
+    - podman
+    - k0s

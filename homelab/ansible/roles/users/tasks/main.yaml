@@ -1,0 +1,25 @@
+- name: Ensure managed users exist
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: "{{ item.groups | default([]) }}"
+    append: true
+    shell: "{{ item.shell | default('/bin/bash') }}"
+    create_home: true
+    state: present
+  loop: "{{ managed_users | default([]) }}"
+
+- name: Install authorized keys for managed users
+  ansible.posix.authorized_key:
+    user: "{{ item.0.name }}"
+    key: "{{ item.1 }}"
+  loop: "{{ (managed_users | default([])) | subelements('ssh_keys', skip_missing=True) }}"
+
+- name: Allow passwordless sudo for selected users
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/90-{{ item.name }}"
+    mode: "0440"
+    content: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL\n"
+    validate: "visudo -cf %s"
+  when: item.sudo_nopasswd | default(false)
+  loop: "{{ managed_users | default([]) }}"
+

@@ -1,0 +1,100 @@
+- name: Determine k0s arch
+  ansible.builtin.set_fact:
+    k0s_arch: "{{ k0s_arch_map.get(ansible_facts['architecture'], ansible_facts['architecture']) }}"
+
+- name: Download k0s binary
+  ansible.builtin.get_url:
+    url: "https://github.com/k0sproject/k0s/releases/download/{{ k0s_version }}/k0s-{{ k0s_version }}-{{ k0s_arch }}"
+    dest: "{{ k0s_install_dir }}/k0s"
+    mode: "0755"
+
+- name: Ensure k0s config dir exists
+  ansible.builtin.file:
+    path: /etc/k0s
+    state: directory
+    mode: "0755"
+
+- name: Create default k0s config if missing
+  ansible.builtin.command: "{{ k0s_install_dir }}/k0s config create"
+  register: k0s_config
+  changed_when: false
+
+- name: Write k0s config (single-node baseline)
+  ansible.builtin.copy:
+    dest: "{{ k0s_config_path }}"
+    mode: "0644"
+    # TODO: Move config to separate file.
+    # TODO: Move metadata.name to var.
+    content: |
+      apiVersion: k0s.k0sproject.io/v1beta1
+      kind: ClusterConfig
+      metadata:
+        name: homelab
+      spec:
+        network:
+          provider: kuberouter
+
+# TODO: Run controller and worker separately.
+# TODO: Configure external access and obtain local kubectl configs.
+- name: Install k0s controller --single (creates systemd unit)
+  ansible.builtin.command: >
+    {{ k0s_install_dir }}/k0s install controller --single --config {{ k0s_config_path }}
+  args:
+    creates: /etc/systemd/system/k0scontroller.service
+  notify:
+    - daemon-reload
+
+- name: Enable and start k0scontroller
+  ansible.builtin.service:
+    name: k0scontroller
+    enabled: true
+    state: started
+
+# OLD VARIANT:
+# - name: Run controller container
+#   containers.podman.podman_container:
+#     name: k0s-controller
+#     image: "{{ k0s_image }}"
+#     state: started
+#     restart_policy: always
+#     detach: true
+#     exposed_ports:
+#       - 6443
+#     ports:
+#       - 6443
+#     volumes:
+#       - /var/lib/k0s
+#     read_only: true
+#     read_only_tmpfs: true
+#     command: "k0s controller"
+#
+# - name: Wait until controller started
+#   containers.podman.podman_container_exec:
+#     name: k0s-controller
+#     command: "test -e /run/k0s/status.sock"
+#   register: controller_status_socket_check
+#   until: controller_status_socket_check.rc == 0
+#   retries: 20
+#   delay: 5
+#
+# # TODO: Add idempotency.
+# - name: Obtain k0s token
+#   containers.podman.podman_container_exec:
+#     name: k0s-controller
+#     command: "k0s token create --role=worker"
+#   register: k0s_token
+#
+# # TODO: Add idempotency.
+# - name: Run worker container
+#   containers.podman.podman_container:
+#     name: k0s-worker-0
+#     image: "{{ k0s_image }}"
+#     state: started
+#     restart_policy: always
+#     detach: true
+#     privileged: true
+#     volumes:
+#       - /var/lib/k0s
+#       - /var/log/pods
+#     command: "k0s worker {{ k0s_token.stdout }}"
+

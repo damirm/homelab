@@ -1,6 +1,0 @@
-- hosts: all
-  become: true
-  roles:
-    - ../roles/common
-    - ../roles/k0s
-    - ../roles/apps/dashboard/
