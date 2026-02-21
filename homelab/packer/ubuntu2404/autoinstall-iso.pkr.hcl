@@ -15,7 +15,6 @@ build {
       "OUTPUT_ISO=/work/${var.output_iso}"
     ]
     inline = [
-      "chmod +x ../../scripts/iso-build-container.sh",
       "../../scripts/iso-build-container.sh"
     ]
   }

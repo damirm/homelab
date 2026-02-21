@@ -31,28 +31,27 @@ packer-iso-init:
 packer-fmt:
 	packer fmt -recursive $(PACKER_DIR)
 
-packer-iso-validate: ## validate ISO packer template
+packer-iso-validate: packer-fmt
 	cd $(PACKER_DIR) && packer validate autoinstall-iso.pkr.hcl
 
 iso-builder-image:
 	$(CONTAINER_ENGINE) build --platform=$(DOCKER_PLATFORM) -t $(ISO_BUILDER_IMAGE) -f iso/Dockerfile .
 
-iso-build: iso-builder-image packer-iso-init ## Build bare metal autoinstall ISO into dist/
+iso-build: iso-builder-image packer-iso-init packer-iso-validate
 	cd $(PACKER_DIR) && packer build autoinstall-iso.pkr.hcl
 
-usb-write: ## Write ISO to USB (DANGEROUS). Example: make usb-write DEV=/dev/sdX
+usb-write:
 	@ISO=$${ISO:-dist/ubuntu-24.04-autoinstall-homelab.iso} DEV=$${DEV:-} ./scripts/write-usb.sh
 
-test-multipass: ansible-deps ## Create multipass VM and run ansible
-	@chmod +x test/multipass/run.sh
-	@./test/multipass/run.sh
+test-multipass: ansible-deps
+	@NAME=$${NAME:-homelab-test}; @./test/multipass/run.sh
 
-test-multipass-destroy: ## Destroy multipass VM (NAME=homelab-test)
+test-multipass-destroy:
 	@NAME=$${NAME:-homelab-test}; multipass delete -p $$NAME || true
 
-test-vagrant: ansible-deps ## vagrant up (runs ansible provision)
+test-vagrant: ansible-deps
 	cd test/vagrant && vagrant up
 
-test-vagrant-destroy: ## vagrant destroy
+test-vagrant-destroy:
 	cd test/vagrant && vagrant destroy -f
 

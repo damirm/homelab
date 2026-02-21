@@ -7,7 +7,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 
 WORKDIR /work
 COPY scripts/build-autoinstall-iso.sh /usr/local/bin/build-autoinstall-iso
-RUN chmod +x /usr/local/bin/build-autoinstall-iso
 
 ENTRYPOINT ["/usr/local/bin/build-autoinstall-iso"]
 
