@@ -21,5 +21,5 @@ The repository contains IaaC for homelab server.
 - [ ] dns setup (*.nas.local, nas.local) -> nas services, otherwise *.local to homelab server
 - [ ] Should I use nixos for homelab?
 - [ ] Install proxmox ve
-- [ ] Define ubuntu image globally for all: multipass tests, iso build
+- [ ] Define ubuntu image globally for all: multipass tests, iso build, github ci
 - [ ] Should I run k0s controller and worker inside podman container instead of on directly on host?
