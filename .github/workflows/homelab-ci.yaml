@@ -43,7 +43,7 @@ jobs:
 
       - name: Ansible lint (optional)
         run: |
-          ~/.local/bin/ansible-lint playbooks/homelab.yml || true
+          ~/.local/bin/ansible-lint playbooks/homelab.yaml || true
 
   build-iso:
     runs-on: ubuntu-latest
