@@ -58,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ubuntu-24.04-autoinstall-homelab
-          path: dist/*.iso
+          path: homelab/dist/*.iso
           if-no-files-found: error
 
   # release:
