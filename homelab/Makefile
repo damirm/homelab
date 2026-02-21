@@ -36,6 +36,7 @@ packer-iso-validate: packer-fmt
 
 iso-builder-image:
 	$(CONTAINER_ENGINE) buildx build --platform=$(DOCKER_PLATFORM) \
+		--load \
 		--pull=false \
 		--cache-from=type=local,src=/tmp/.buildx-cache \
 		--cache-to=type=local,dest=/tmp/.buildx-cache,mode=max \
